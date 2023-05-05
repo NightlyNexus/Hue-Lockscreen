@@ -1,0 +1,110 @@
+buildscript {
+  ext.versions = [
+      androidGradlePlugin: '8.0.1',
+      androidx: [
+          activity: '1.7.1',
+          annotations: '1.6.0',
+          appcompat: '1.6.1',
+          collection: '1.2.0',
+          core: '1.10.0',
+          drawerlayout: '1.2.0',
+          fragment: '1.5.7',
+          lifecycle: '2.6.1',
+          preference: '1.2.0',
+          savedstate: '1.2.1'
+      ],
+      billing: '5.2.0',
+      compileSdk: 33,
+      coroutines: '1.6.4',
+      dagger: '2.44',
+      demomode: '0.6.0',
+      junit: '4.13.2',
+      kotlin: '1.8.21',
+      leakcanary: '2.10',
+      material: '1.8.0',
+      moshi: '1.14.0',
+      okhttp: '4.10.0',
+      okio: '3.3.0',
+      sqldelight: '1.5.4',
+      truth: '1.1.3'
+  ]
+
+  ext.deps = [
+      androidx: [
+          activity: "androidx.activity:activity-ktx:$versions.androidx.activity",
+          annotations: "androidx.annotation:annotation:$versions.androidx.annotations",
+          appcompat: "androidx.appcompat:appcompat:$versions.androidx.appcompat",
+          collection: "androidx.collection:collection-ktx:$versions.androidx.collection",
+          core: "androidx.core:core-ktx:$versions.androidx.core",
+          drawerlayout: "androidx.drawerlayout:drawerlayout:$versions.androidx.drawerlayout",
+          fragment: "androidx.fragment:fragment:$versions.androidx.fragment",
+          lifecycleLivedataCore: "androidx.lifecycle:lifecycle-livedata-core-ktx:$versions.androidx.lifecycle",
+          lifecycleRuntime: "androidx.lifecycle:lifecycle-runtime-ktx:$versions.androidx.lifecycle",
+          lifecycleViewmodel: "androidx.lifecycle:lifecycle-viewmodel:$versions.androidx.lifecycle",
+          preference: "androidx.preference:preference-ktx:$versions.androidx.preference",
+          savedstate: "androidx.savedstate:savedstate-ktx:$versions.androidx.savedstate"
+      ],
+      androidGradlePlugin: "com.android.tools.build:gradle:$versions.androidGradlePlugin",
+      billing: "com.android.billingclient:billing-ktx:$versions.billing",
+      dagger: [
+          compiler: "com.google.dagger:dagger-compiler:$versions.dagger",
+          runtime: "com.google.dagger:dagger:$versions.dagger"
+      ],
+      daggerAndroid: [
+          compiler: "com.google.dagger:dagger-android-processor:$versions.dagger",
+          runtime: "com.google.dagger:dagger-android:$versions.dagger"
+      ],
+      demomode: "com.nightlynexus.demomode:demomode:$versions.demomode",
+      junit: "junit:junit:$versions.junit",
+      kotlin: [
+          coroutines: "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines",
+          coroutinesAndroid: "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines",
+          gradlePlugin: "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin",
+          stdlibJdk8: "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin"
+      ],
+      leakcanary: "com.squareup.leakcanary:leakcanary-android:$versions.leakcanary",
+      material: "com.google.android.material:material:$versions.material",
+      moshi: [
+          core: "com.squareup.moshi:moshi:$versions.moshi",
+          kotlinCodegen: "com.squareup.moshi:moshi-kotlin-codegen:$versions.moshi"
+      ],
+      okhttp: "com.squareup.okhttp3:okhttp:$versions.okhttp",
+      okio: "com.squareup.okio:okio:$versions.okio",
+      sqldelight: [
+          androidDriver: "com.squareup.sqldelight:android-driver:$versions.sqldelight",
+          gradlePlugin: "com.squareup.sqldelight:gradle-plugin:$versions.sqldelight"
+      ],
+      truth: "com.google.truth:truth:$versions.truth"
+  ]
+
+  dependencies {
+    classpath deps.androidGradlePlugin
+    classpath deps.kotlin.gradlePlugin
+    classpath deps.sqldelight.gradlePlugin
+  }
+
+  repositories {
+    google()
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
+
+allprojects {
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  afterEvaluate { project ->
+    project.configurations.all {
+      resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.version.endsWith('+')) {
+          throw new GradleException(
+              "Wildcard dependency forbidden: ${requested.group}:${requested.name}:${requested.version}")
+        }
+      }
+    }
+  }
+}

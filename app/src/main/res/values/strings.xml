@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Hue Lockscreen</string>
+  <string name="light_title">Eric’s room</string>
+  <string name="light_button_action_description">Toggle light</string>
+</resources>

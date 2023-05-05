@@ -1,0 +1,2 @@
+rootProject.name = "Hue Lockscreen"
+include ':app'
