@@ -22,11 +22,5 @@
         <action android:name="android.service.controls.ControlsProviderService" />
       </intent-filter>
     </service>
-
-    <activity
-        android:name=".ColorConfigurationActivity"
-        android:excludeFromRecents="true"
-        android:exported="false"
-        android:theme="@android:style/Theme.Material.Dialog.NoActionBar" />
   </application>
 </manifest>

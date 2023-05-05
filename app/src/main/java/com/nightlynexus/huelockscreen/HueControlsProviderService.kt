@@ -1,6 +1,7 @@
 package com.nightlynexus.huelockscreen
 
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Build.VERSION.SDK_INT
 import android.service.controls.Control
@@ -56,14 +57,23 @@ class HueControlsProviderService : ControlsProviderService() {
     }
   }
 
-  private fun createStatelessControl(id: String, title: String, type: Int): Control {
-    val intent = Intent(this, ColorConfigurationActivity::class.java)
-    val action = PendingIntent.getActivity(
+  private fun createAction(): PendingIntent {
+    val intent = Intent().setComponent(
+      ComponentName(
+        "com.philips.lighting.huebridgev1",
+        "com.philips.lighting.hue2.ContentActivity"
+      )
+    )
+    return PendingIntent.getActivity(
       this,
       pendingIntentRequestCode,
       intent,
       PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
+  }
+
+  private fun createStatelessControl(id: String, title: String, type: Int): Control {
+    val action = createAction()
     return Control.StatelessBuilder(id, action)
       .setTitle(title)
       .setCustomColor(getColorStateList(R.color.light_color))
@@ -77,13 +87,7 @@ class HueControlsProviderService : ControlsProviderService() {
     type: Int,
     template: ControlTemplate
   ): Control {
-    val intent = Intent(this, ColorConfigurationActivity::class.java)
-    val action = PendingIntent.getActivity(
-      this,
-      pendingIntentRequestCode,
-      intent,
-      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-    )
+    val action = createAction()
     val controlBuilder = Control.StatefulBuilder(id, action)
       .setTitle(title)
       .setCustomColor(getColorStateList(R.color.light_color))
