@@ -193,7 +193,7 @@ class HueControlsProviderService : ControlsProviderService() {
       }
 
       onOffCall?.cancel()
-      val call = newOnCall()
+      val call = newCall(true, brightnessPercentage)
       call.enqueue(this)
       onOffCall = call
     }
@@ -211,7 +211,7 @@ class HueControlsProviderService : ControlsProviderService() {
       }
 
       onOffCall?.cancel()
-      val call = newOffCall()
+      val call = newCall(false, brightnessPercentage)
       call.enqueue(this)
       onOffCall = call
     }
@@ -229,7 +229,7 @@ class HueControlsProviderService : ControlsProviderService() {
       }
 
       brightnessCall?.cancel()
-      val call = newBrightnessCall(brightnessPercentage)
+      val call = newCall(on, brightnessPercentage)
       call.enqueue(this)
       brightnessCall = call
     }
@@ -324,33 +324,13 @@ class HueControlsProviderService : ControlsProviderService() {
     )
   }
 
-  private fun newOnCall(): Call {
-    return client.newCall(
-      Request.Builder()
-        .url(actionUrl)
-        .put("""{"on":true}""".toRequestBody("application/json; charset=utf-8".toMediaType()))
-        .tag(this)
-        .build()
-    )
-  }
-
-  private fun newOffCall(): Call {
-    return client.newCall(
-      Request.Builder()
-        .url(actionUrl)
-        .put("""{"on":false}""".toRequestBody("application/json; charset=utf-8".toMediaType()))
-        .tag(this)
-        .build()
-    )
-  }
-
-  private fun newBrightnessCall(brightnessPercentage: Float): Call {
+  private fun newCall(on: Boolean, brightnessPercentage: Float): Call {
     val brightness = brightness(brightnessPercentage)
     return client.newCall(
       Request.Builder()
         .url(actionUrl)
         .put(
-          """{"bri":$brightness}""".toRequestBody(
+          """{"on":${if (on) "true" else "false"},"bri":$brightness}""".toRequestBody(
             "application/json; charset=utf-8".toMediaType()
           )
         )
